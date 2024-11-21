@@ -20,28 +20,4 @@ model Profile {
   @@map("profiles")
 }
 
-model Session {
-  id            String    @id
-  user_id       String
-  created_at    DateTime  @default(now())
-  updated_at    DateTime  @updatedAt
-  expires_at    DateTime?
-  access_token  String?
-  refresh_token String?
-
-  user User @relation(fields: [user_id], references: [id])
-
-  @@map("auth.sessions")
-}
-
-model User {
-  id         String    @id @default(uuid())
-  email      String    @unique
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
-  sessions   Session[]
-
-  @@map("auth.users")
-}
-
 // You can add more models here as needed
