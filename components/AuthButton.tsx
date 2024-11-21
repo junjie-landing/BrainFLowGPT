@@ -13,6 +13,11 @@ export function AuthButton({ mode }: AuthButtonProps) {
   const [password, setPassword] = useState('')
   const [showModal, setShowModal] = useState(false)
 
+  if (!signUp || !signIn || !signOut) {
+    console.error('Auth functions not properly initialized:', { signUp, signIn, signOut })
+    return null
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
@@ -52,7 +57,7 @@ export function AuthButton({ mode }: AuthButtonProps) {
       </button>
 
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-start justify-center pt-[20vh] bg-black bg-opacity-50">
           <div className="p-8 bg-white rounded-lg w-full max-w-md">
             <h2 className="mb-4 text-xl font-bold">
               {mode === 'sign-up' ? 'Create an account' : 'Welcome back'}
@@ -63,16 +68,16 @@ export function AuthButton({ mode }: AuthButtonProps) {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black/5"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black/5 text-black"
               />
               <input
                 type="password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black/5"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black/5 text-black"
               />
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center mt-8">
                 <button
                   type="submit"
                   className="px-4 py-2 text-white bg-black rounded-md hover:bg-black/80 transition-colors"
