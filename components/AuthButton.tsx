@@ -1,9 +1,14 @@
+'use client'
+
 import { useState } from 'react'
 import { useAuth } from './AuthContext'
 
-export function AuthButton() {
+interface AuthButtonProps {
+  mode: 'sign-in' | 'sign-up'
+}
+
+export function AuthButton({ mode }: AuthButtonProps) {
   const { user, signIn, signUp, signOut } = useAuth()
-  const [isSignUp, setIsSignUp] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showModal, setShowModal] = useState(false)
@@ -11,7 +16,7 @@ export function AuthButton() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      if (isSignUp) {
+      if (mode === 'sign-up') {
         await signUp(email, password)
       } else {
         await signIn(email, password)
@@ -33,20 +38,24 @@ export function AuthButton() {
     )
   }
 
+  const buttonStyles = mode === 'sign-up'
+    ? "px-4 py-2 text-sm font-medium text-white bg-black rounded-md hover:bg-black/80 transition-colors"
+    : "px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors";
+
   return (
     <>
       <button
         onClick={() => setShowModal(true)}
-        className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+        className={buttonStyles}
       >
-        Sign In
+        {mode === 'sign-up' ? 'Sign Up' : 'Sign In'}
       </button>
 
       {showModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="p-8 bg-white rounded-lg">
+          <div className="p-8 bg-white rounded-lg w-full max-w-md">
             <h2 className="mb-4 text-xl font-bold">
-              {isSignUp ? 'Sign Up' : 'Sign In'}
+              {mode === 'sign-up' ? 'Create an account' : 'Welcome back'}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <input
@@ -54,28 +63,28 @@ export function AuthButton() {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 border rounded"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black/5"
               />
               <input
                 type="password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border rounded"
+                className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-black/5"
               />
-              <div className="flex justify-between">
+              <div className="flex justify-between items-center">
                 <button
                   type="submit"
-                  className="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+                  className="px-4 py-2 text-white bg-black rounded-md hover:bg-black/80 transition-colors"
                 >
-                  {isSignUp ? 'Sign Up' : 'Sign In'}
+                  {mode === 'sign-up' ? 'Sign Up' : 'Sign In'}
                 </button>
                 <button
                   type="button"
-                  onClick={() => setIsSignUp(!isSignUp)}
-                  className="px-4 py-2 text-blue-600 underline"
+                  onClick={() => setShowModal(false)}
+                  className="text-sm text-gray-500 hover:text-gray-700"
                 >
-                  {isSignUp ? 'Have an account? Sign In' : 'Need an account? Sign Up'}
+                  Cancel
                 </button>
               </div>
             </form>

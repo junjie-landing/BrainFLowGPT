@@ -51,7 +51,10 @@ export function Navigation() {
               </svg>
               <span className="hidden lg:block">Star on GitHub</span>
             </a>
-            <AuthButton />
+            <div className="flex items-center gap-3">
+              <AuthButton mode="sign-in" />
+              <AuthButton mode="sign-up" />
+            </div>
           </div>
         </div>
       </div>
