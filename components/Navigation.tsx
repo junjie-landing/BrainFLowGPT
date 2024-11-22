@@ -1,9 +1,12 @@
 'use client'
 
 import { AuthButton } from '@/components/AuthButton'
+import { useAuth } from '@/components/AuthContext'
 import Link from 'next/link'
 
 export function Navigation() {
+  const { user } = useAuth()
+
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-black/5 bg-white/75 backdrop-blur-lg">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -52,8 +55,19 @@ export function Navigation() {
               <span className="hidden lg:block">Star on GitHub</span>
             </a>
             <div className="flex items-center gap-3">
-              <AuthButton mode="sign-in" />
-              <AuthButton mode="sign-up" />
+              {user ? (
+                <div className="flex items-center gap-3">
+                  <div className="text-sm font-medium text-gray-700">
+                    {user.email}
+                  </div>
+                  <AuthButton mode="sign-in" />
+                </div>
+              ) : (
+                <>
+                  <AuthButton mode="sign-in" />
+                  <AuthButton mode="sign-up" />
+                </>
+              )}
             </div>
           </div>
         </div>
