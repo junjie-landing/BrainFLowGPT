@@ -2,10 +2,16 @@
 
 import { AuthButton } from '@/components/AuthButton'
 import { useAuth } from '@/components/AuthContext'
-import Link from 'next/link'
 
 export function Navigation() {
   const { user } = useAuth()
+
+  const scrollToSection = (id: string) => {
+    const element = document.getElementById(id)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-black/5 dark:border-white/5 bg-white/75 dark:bg-gray-900/75 backdrop-blur-lg transition-colors">
@@ -13,31 +19,31 @@ export function Navigation() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo & Primary Nav */}
           <div className="flex items-center gap-8">
-            <Link
-              href="/"
+            <button
+              onClick={() => scrollToSection('home')}
               className="text-xl font-semibold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent"
             >
               Your Logo
-            </Link>
+            </button>
             <div className="hidden md:flex items-center gap-6">
-              <Link
-                href="/features"
+              <button
+                onClick={() => scrollToSection('features')}
                 className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
               >
                 Features
-              </Link>
-              <Link
-                href="/docs"
+              </button>
+              <button
+                onClick={() => scrollToSection('docs')}
                 className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
               >
                 Docs
-              </Link>
-              <Link
-                href="/pricing"
+              </button>
+              <button
+                onClick={() => scrollToSection('pricing')}
                 className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
               >
                 Pricing
-              </Link>
+              </button>
             </div>
           </div>
 
