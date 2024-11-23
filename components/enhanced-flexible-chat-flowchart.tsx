@@ -14,6 +14,7 @@ import ReactFlow, {
   NodeProps,
   Handle,
   Position,
+  BackgroundVariant,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import { PlusCircle, Trash2, Copy, Send } from 'lucide-react'
@@ -21,7 +22,6 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
-
 const NODE_WIDTH = 375
 const GRID_SPACING_X = 425
 const VERTICAL_SPACING = 50
@@ -167,7 +167,7 @@ function ChatNode({ data, id }: NodeProps) {
       )}
       <div className="space-y-2 mb-2">
         {response && (
-          <div 
+          <div
             className="p-2 bg-gray-100 rounded relative"
             onMouseEnter={() => setShowCopyButton(true)}
             onMouseLeave={() => setShowCopyButton(false)}
@@ -321,7 +321,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
   const updateNodePositions = useCallback(() => {
     const tree = buildTree(nodes, edges)
     const updatedNodes = positionNodes(tree, 0, 0, nodes, edges)
-    setNodes((currentNodes) => 
+    setNodes((currentNodes) =>
       currentNodes.map((node) => {
         const updatedNode = updatedNodes.find((n) => n.id === node.id)
         return updatedNode ? { ...node, position: updatedNode.position } : node
@@ -362,7 +362,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         nodesDraggable={true} // Updated line
         onNodeDragStop={onNodeDragStop} // Added line
       >
-        <Background variant="dots" gap={12} size={1} />
+        <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         <Controls />
       </ReactFlow>
     </div>
