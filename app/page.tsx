@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Navigation } from '@/components/Navigation'
+import { EnhancedFlexibleChatFlowchartComponent } from "@/components/enhanced-flexible-chat-flowchart";
 
 export default function Home() {
   return (
@@ -7,10 +8,7 @@ export default function Home() {
       <Navigation />
 
       <section id="home" className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold">Welcome to Your App</h1>
-          <p className="mt-4 text-gray-600 dark:text-gray-300">Your awesome app description here</p>
-        </div>
+        <EnhancedFlexibleChatFlowchartComponent />
       </section>
 
       <section id="features" className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
@@ -35,3 +33,4 @@ export default function Home() {
       </section>
     </main>
   );
+}
