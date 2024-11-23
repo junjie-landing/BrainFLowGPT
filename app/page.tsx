@@ -8,7 +8,9 @@ export default function Home() {
       <Navigation />
 
       <section id="home" className="min-h-screen flex items-center justify-center">
-        <EnhancedFlexibleChatFlowchartComponent />
+        <div className="container mx-auto px-4">
+          <EnhancedFlexibleChatFlowchartComponent />
+        </div>
       </section>
 
       <section id="features" className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">

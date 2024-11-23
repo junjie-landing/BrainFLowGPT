@@ -80,7 +80,7 @@ const positionNodes = (tree: TreeNode, x: number, y: number, nodes: Node[], edge
 }
 
 const initialNodes: Node[] = [
-  { id: '0', data: { input: '', response: 'Welcome to use chat-explore! You can branch out your conversation as much as you like!', height: 0 }, position: { x: 0, y: 0 }, type: 'chatNode' },
+  { id: '0', data: { input: 'Welcome to WanderChat!', response: 'You can chat and branch out your conversation whenever you like!', height: 0 }, position: { x: 0, y: 0 }, type: 'chatNode' },
 ]
 
 const initialEdges: Edge[] = []
@@ -149,7 +149,7 @@ function ChatNode({ data, id }: NodeProps) {
   return (
     <Card
       ref={nodeRef}
-      className="relative p-4 pt-8 shadow-md" // Updated padding
+      className="relative p-4 pt-8 shadow-md"
       style={{ width: NODE_WIDTH }}
       onMouseEnter={() => {
         setShowAddButton(true)
@@ -160,12 +160,12 @@ function ChatNode({ data, id }: NodeProps) {
         setShowDeleteButton(false)
       }}
     >
-      {isSubmitted && (
-        <div className="mb-2">
+      {(isSubmitted || id == '0') && (
+        <div className="mb-2" onMouseDown={(e) => e.stopPropagation()}>
           <p className="font-bold text-lg">{input}</p>
         </div>
       )}
-      <div className="space-y-2 mb-2">
+      <div className="space-y-2 mb-2" onMouseDown={(e) => e.stopPropagation()}>
         {response && (
           <div
             className="p-2 bg-gray-100 rounded relative"
@@ -357,10 +357,13 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         nodeTypes={nodeTypes}
         connectionMode={ConnectionMode.Loose}
         fitView
+        fitViewOptions={
+          {maxZoom: 1,}
+        }
         minZoom={0.1}
         maxZoom={4}
-        nodesDraggable={true} // Updated line
-        onNodeDragStop={onNodeDragStop} // Added line
+        // nodesDraggable={true}
+        onNodeDragStop={onNodeDragStop}
       >
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         <Controls />
