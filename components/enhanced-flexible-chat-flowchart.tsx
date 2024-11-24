@@ -106,7 +106,7 @@ function ChatNode({ data, id }: NodeProps) {
   const handleSubmit = async () => {
     try {
       setIsLoading(true)
-      const aiResponse = input.toUpperCase()
+      const aiResponse = await getAIResponse(input)
       setResponse(aiResponse)
       data.updateNodeData(id, { input, response: aiResponse })
       setIsSubmitted(true)
