@@ -347,8 +347,8 @@ export function EnhancedFlexibleChatFlowchartComponent() {
   }, [nodes, edges, updateNodePositions])
 
   return (
-    <div className="w-full h-screen">
-      <ReactFlow
+    <div className="w-full h-[66vh] border border-gray-200 rounded-lg my-10">
+      {/* <ReactFlow
         nodes={nodes.map((node) => ({ ...node, data: { ...node.data, onAdd, onDelete, updateNodeData } }))}
         edges={edges}
         onNodesChange={onNodesChange}
@@ -367,7 +367,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
       >
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         <Controls />
-      </ReactFlow>
+      </ReactFlow> */}
     </div>
   )
 }

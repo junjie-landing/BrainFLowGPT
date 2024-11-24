@@ -7,7 +7,7 @@ export default function Home() {
     <main className="min-h-screen">
       <Navigation />
 
-      <section id="home" className="min-h-screen flex items-center justify-center">
+      <section id="home" className=" flex items-center justify-center">
         <div className="container mx-auto px-4">
           <EnhancedFlexibleChatFlowchartComponent />
         </div>
