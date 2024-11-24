@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
+import { getAIResponse } from '@/app/actions/chat'
 const NODE_WIDTH = 375
 const GRID_SPACING_X = 425
 const VERTICAL_SPACING = 50
@@ -94,6 +95,7 @@ function ChatNode({ data, id }: NodeProps) {
   const [input, setInput] = useState(data.input)
   const [response, setResponse] = useState(data.response)
   const [isSubmitted, setIsSubmitted] = useState(false) // Added new state variable
+  const [isLoading, setIsLoading] = useState(false)
   const nodeRef = useRef<HTMLDivElement>(null)
   const prevHeightRef = useRef<number>(data.height)
 
@@ -101,11 +103,21 @@ function ChatNode({ data, id }: NodeProps) {
     data.onAdd(id)
   }
 
-  const handleSubmit = () => {
-    const upperCaseResponse = input.toUpperCase()
-    setResponse(upperCaseResponse)
-    data.updateNodeData(id, { input, response: upperCaseResponse })
-    setIsSubmitted(true) // Updated to set isSubmitted to true
+  const handleSubmit = async () => {
+    try {
+      setIsLoading(true)
+      const aiResponse = input.toUpperCase()
+      setResponse(aiResponse)
+      data.updateNodeData(id, { input, response: aiResponse })
+      setIsSubmitted(true)
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to get response from AI",
+      })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
