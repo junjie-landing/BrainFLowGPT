@@ -178,7 +178,11 @@ function ChatNode({ data, id }: NodeProps) {
         </div>
       )}
       <div className="space-y-2 mb-2" onMouseDown={(e) => e.stopPropagation()}>
-        {response && (
+        {!response && isLoading ? (
+          <div className="p-2 bg-gray-100 rounded">
+            <p className="text-sm text-gray-500">Loading response...</p>
+          </div>
+        ) : response && (
           <div
             className="p-2 bg-gray-100 rounded relative"
             onMouseEnter={() => setShowCopyButton(true)}
