@@ -29,7 +29,7 @@ import { getAIResponse } from '@/app/actions/chat'
 import { toPng } from 'html-to-image'
 import ReactMarkdown from 'react-markdown'
 const NODE_WIDTH = 425
-const GRID_SPACING_X = 425
+const GRID_SPACING_X = 450
 const VERTICAL_SPACING = 50
 
 interface TreeNode {
@@ -267,7 +267,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
   const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   const onConnect = useCallback(
-    (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
+    (params: Edge | Connection) => setEdges((eds) => addEdge({ ...params, animated: true }, eds)),
     [setEdges]
   )
 
@@ -301,6 +301,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         source: parentId,
         target: newNodeId,
         type: 'smoothstep',
+        animated: true,
       },
     ])
 
