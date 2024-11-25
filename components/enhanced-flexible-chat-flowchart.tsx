@@ -15,14 +15,18 @@ import ReactFlow, {
   Handle,
   Position,
   BackgroundVariant,
+  Panel,
+  getRectOfNodes,
+  getTransformForBounds,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
-import { PlusCircle, Trash2, Copy, Send } from 'lucide-react'
+import { PlusCircle, Trash2, Copy, Send, Download } from 'lucide-react'
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
 import { getAIResponse } from '@/app/actions/chat'
+import { toPng } from 'html-to-image'
 const NODE_WIDTH = 375
 const GRID_SPACING_X = 425
 const VERTICAL_SPACING = 50
@@ -178,11 +182,7 @@ function ChatNode({ data, id }: NodeProps) {
         </div>
       )}
       <div className="space-y-2 mb-2" onMouseDown={(e) => e.stopPropagation()}>
-        {!response && isLoading ? (
-          <div className="p-2 bg-gray-100 rounded">
-            <p className="text-sm text-gray-500">Loading response...</p>
-          </div>
-        ) : response && (
+        {response && (
           <div
             className="p-2 bg-gray-100 rounded relative"
             onMouseEnter={() => setShowCopyButton(true)}
@@ -362,6 +362,58 @@ export function EnhancedFlexibleChatFlowchartComponent() {
     }
   }, [nodes, edges, updateNodePositions])
 
+  const onDownloadImage = useCallback(() => {
+    const nodesBounds = getRectOfNodes(nodes)
+    const transform = getTransformForBounds(
+      nodesBounds,
+      nodesBounds.width,
+      nodesBounds.height,
+      0.5,
+      0.5
+    )
+
+    // Find the viewport element (contains only nodes and edges)
+    const viewport = document.querySelector('.react-flow__viewport') as HTMLElement
+    if (!viewport) return
+
+    // Temporarily hide background and controls
+    const background = document.querySelector('.react-flow__background') as HTMLElement
+    const controls = document.querySelector('.react-flow__controls') as HTMLElement
+    const panel = document.querySelector('.react-flow__panel') as HTMLElement
+
+    if (background) background.style.display = 'none'
+    if (controls) controls.style.display = 'none'
+    if (panel) panel.style.display = 'none'
+
+    toPng(viewport, {
+      backgroundColor: '#ffffff',
+      width: nodesBounds.width ,
+      height: nodesBounds.height ,
+      style: {
+        transform: `translate(${transform[0]}px, ${transform[1]}px) scale(${transform[2]})`,
+      },
+    })
+      .then((dataUrl) => {
+        const a = document.createElement('a')
+        a.setAttribute('download', 'flowchart.png')
+        a.setAttribute('href', dataUrl)
+        a.click()
+      })
+      .catch((error) => {
+        console.error('Error downloading image:', error)
+        toast({
+          title: "Error",
+          description: "Failed to download image",
+        })
+      })
+      .finally(() => {
+        // Restore visibility of hidden elements
+        if (background) background.style.display = 'block'
+        if (controls) controls.style.display = 'block'
+        if (panel) panel.style.display = 'block'
+      })
+  }, [nodes])
+
   return (
     <div className="w-full h-[66vh] rounded-lg my-10 shadow-lg">
       <ReactFlow
@@ -383,6 +435,17 @@ export function EnhancedFlexibleChatFlowchartComponent() {
       >
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         <Controls />
+        <Panel position="top-right" className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onDownloadImage}
+            className="flex items-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Export as PNG
+          </Button>
+        </Panel>
       </ReactFlow>
     </div>
   )
