@@ -27,7 +27,8 @@ import { Card } from "@/components/ui/card"
 import { toast } from "@/components/ui/use-toast"
 import { getAIResponse } from '@/app/actions/chat'
 import { toPng } from 'html-to-image'
-const NODE_WIDTH = 375
+import ReactMarkdown from 'react-markdown'
+const NODE_WIDTH = 425
 const GRID_SPACING_X = 425
 const VERTICAL_SPACING = 50
 
@@ -188,7 +189,9 @@ function ChatNode({ data, id }: NodeProps) {
             onMouseEnter={() => setShowCopyButton(true)}
             onMouseLeave={() => setShowCopyButton(false)}
           >
-            <p className="break-words text-sm">{response}</p>
+            <div className="prose prose-sm max-w-none">
+              <ReactMarkdown>{response}</ReactMarkdown>
+            </div>
             {showCopyButton && (
               <Button
                 variant="ghost"

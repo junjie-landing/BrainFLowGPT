@@ -2,6 +2,7 @@
 
 import { useChat } from '@/lib/hooks/useChat'
 import { useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 export function ChatComponent() {
   const { messages, isLoading, error, sendMessage } = useChat()
@@ -11,9 +12,12 @@ export function ChatComponent() {
     e.preventDefault()
     if (!input.trim()) return
 
-    await sendMessage(input)
+    const tobesubmitted = input
     setInput('')
+    await sendMessage(tobesubmitted)
   }
+
+  console.log(`the message.content is ${JSON.stringify(messages)}`)
 
   return (
     <div className="flex flex-col h-[600px] max-w-2xl mx-auto">
@@ -32,7 +36,7 @@ export function ChatComponent() {
                   : 'bg-gray-200 dark:bg-gray-700'
               }`}
             >
-              {message.content}
+              <ReactMarkdown>{message.content}</ReactMarkdown>
             </div>
           </div>
         ))}
