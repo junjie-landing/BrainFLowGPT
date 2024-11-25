@@ -28,15 +28,11 @@ import { toast } from "@/components/ui/use-toast"
 import { getAIResponse } from '@/app/actions/chat'
 import { toPng } from 'html-to-image'
 import ReactMarkdown from 'react-markdown'
-const NODE_WIDTH = 425
-const GRID_SPACING_X = 450
+import { NodeData, ChatMessage, TreeNode } from '@/types/chat'
+import { buildChatContext } from '@/lib/chat-context'
+const NODE_WIDTH = 500
+const GRID_SPACING_X = 512
 const VERTICAL_SPACING = 50
-
-interface TreeNode {
-  id: string;
-  children: TreeNode[];
-  width: number;
-}
 
 const buildTree = (nodes: Node[], edges: Edge[]): TreeNode => {
   const nodeMap: { [key: string]: TreeNode } = {}
@@ -189,7 +185,7 @@ function ChatNode({ data, id }: NodeProps) {
             onMouseEnter={() => setShowCopyButton(true)}
             onMouseLeave={() => setShowCopyButton(false)}
           >
-            <div className="prose prose-sm max-w-none">
+            <div className="prose prose-sm max-w-none [&_p]:mb-4 [&_ul]:mb-4 [&_ol]:mb-4 [&_blockquote]:mb-4 [&_pre]:mb-4">
               <ReactMarkdown>{response}</ReactMarkdown>
             </div>
             {showCopyButton && (
@@ -281,13 +277,20 @@ export function EnhancedFlexibleChatFlowchartComponent() {
       let initialY = 0
       if (parentNode) {
         const parentChildren = edges.filter(e => e.source === parentId).length
-        initialX = parentNode.position.x + (parentChildren * 100) // Offset each child
-        initialY = parentNode.position.y + 100 // Place below parent
+        initialX = parentNode.position.x + (parentChildren * 100)
+        initialY = parentNode.position.y + 100
       }
+
+      const context = buildChatContext(nds, edges, parentId)
 
       const newNode = {
         id: newNodeId,
-        data: { input: '', response: '', height: 0 },
+        data: {
+          input: '',
+          response: '',
+          height: 0,
+          context
+        },
         position: { x: initialX, y: initialY },
         type: 'chatNode',
       }
