@@ -18,6 +18,7 @@ import ReactFlow, {
   Panel,
   getRectOfNodes,
   getTransformForBounds,
+  PanOnScrollMode,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
 import { PlusCircle, Trash2, Copy, Send, Download } from 'lucide-react'
@@ -437,6 +438,9 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         }
         minZoom={0.1}
         maxZoom={4}
+        zoomOnScroll={false}
+        panOnScroll={true}
+        panOnScrollMode={PanOnScrollMode.Vertical}
         // nodesDraggable={true}
         onNodeDragStop={onNodeDragStop}
       >
