@@ -31,6 +31,7 @@ import { toPng } from 'html-to-image'
 import ReactMarkdown from 'react-markdown'
 import { NodeData, ChatMessage, TreeNode } from '@/types/chat'
 import { buildChatContext } from '@/lib/chat-context'
+import { ulid } from 'ulid'
 const NODE_WIDTH = 500
 const GRID_SPACING_X = 512
 const VERTICAL_SPACING = 50
@@ -93,7 +94,11 @@ const initialNodes: Node[] = [
 
 const initialEdges: Edge[] = []
 
-let nodeId = 4
+const extractBoldText = (markdown: string): string[] => {
+  const boldPattern = /\*\*(.*?)\*\*/g;
+  const matches = [...markdown.matchAll(boldPattern)];
+  return matches.map(match => match[1]);
+}
 
 function ChatNode({ data, id }: NodeProps) {
   const [showAddButton, setShowAddButton] = useState(false)
@@ -105,6 +110,7 @@ function ChatNode({ data, id }: NodeProps) {
   const [isLoading, setIsLoading] = useState(false)
   const nodeRef = useRef<HTMLDivElement>(null)
   const prevHeightRef = useRef<number>(data.height)
+  const [boldTexts, setBoldTexts] = useState<string[]>([])
 
   const handleAdd = () => {
     data.onAdd(id)
@@ -175,6 +181,13 @@ function ChatNode({ data, id }: NodeProps) {
     }
   }, [input]);
 
+  useEffect(() => {
+    if (response) {
+      const extracted = extractBoldText(response);
+      setBoldTexts(extracted);
+    }
+  }, [response]);
+
   return (
     <Card
       ref={nodeRef}
@@ -196,25 +209,49 @@ function ChatNode({ data, id }: NodeProps) {
       )}
       <div className="space-y-2 mb-2" onMouseDown={(e) => e.stopPropagation()}>
         {response && (
-          <div
-            className="p-2 bg-gray-100 rounded relative"
-            onMouseEnter={() => setShowCopyButton(true)}
-            onMouseLeave={() => setShowCopyButton(false)}
-          >
-            <div className="prose prose-sm max-w-none [&_p]:mb-4 [&_ul]:mb-4 [&_ol]:mb-4 [&_blockquote]:mb-4 [&_pre]:mb-4">
-              <ReactMarkdown>{response}</ReactMarkdown>
+          <>
+            <div
+              className="p-2 bg-gray-100 rounded relative"
+              onMouseEnter={() => setShowCopyButton(true)}
+              onMouseLeave={() => setShowCopyButton(false)}
+            >
+              <div className="prose prose-sm max-w-none [&_p]:mb-4 [&_ul]:mb-4 [&_ol]:mb-4 [&_blockquote]:mb-4 [&_pre]:mb-4">
+                <ReactMarkdown>{response}</ReactMarkdown>
+              </div>
+              {showCopyButton && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-1 right-1"
+                  onClick={handleCopy}
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              )}
             </div>
-            {showCopyButton && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-1 right-1"
-                onClick={handleCopy}
-              >
-                <Copy className="h-4 w-4" />
-              </Button>
+            {boldTexts.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-4">
+                {boldTexts.map((text, index) => (
+                  <Button
+                    key={index}
+                    variant="outline"
+                    size="sm"
+                    className="text-sm"
+                    onClick={() => {
+                      data.onAdd(id);
+                      // Find the last added node and update its input
+                      const lastNodeId = nodeId.toString();
+                      data.updateNodeData(lastNodeId, {
+                        input: `What is ${text}?`
+                      });
+                    }}
+                  >
+                    What is {text}?
+                  </Button>
+                ))}
+              </div>
             )}
-          </div>
+          </>
         )}
       </div>
       {id !== '0' && !isSubmitted && ( // Updated to conditionally render input box
@@ -290,8 +327,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
   )
 
   const onAdd = useCallback((parentId: string) => {
-    const newNodeId = nodeId.toString()
-    nodeId++
+    const newNodeId = ulid()
 
     setNodes((nds) => {
       const parentNode = nds.find(n => n.id === parentId)
