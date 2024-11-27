@@ -83,7 +83,7 @@ const positionNodes = (tree: TreeNode, x: number, y: number, nodes: Node[], edge
 }
 
 const initialNodes: Node[] = [
-  { id: '0', data: { input: 'Welcome to WanderGPT!', response: 'You can chat and branch out your conversation whenever you like!', height: 0 }, position: { x: 0, y: 0 }, type: 'chatNode' },
+  { id: '0', data: { input: 'Welcome to WanderGPT!', response: 'Your thought is wandering, so does the chat. You can branch out the chat whenever you like!', height: 0 }, position: { x: 0, y: 0 }, type: 'chatNode' },
 ]
 
 const initialEdges: Edge[] = []
