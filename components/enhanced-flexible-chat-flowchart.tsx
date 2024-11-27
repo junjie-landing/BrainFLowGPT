@@ -511,7 +511,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         <style>
           {`
             .highlight-node {
-              border: 2px solid #ff0000 !important;
+              border: 1px solid #ff9f82 !important;
             }
             .highlight-edge {
               stroke: #ff0000 !important;
