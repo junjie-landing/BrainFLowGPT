@@ -236,7 +236,7 @@ function ChatNode({ data, id }: NodeProps) {
                     key={index}
                     variant="outline"
                     size="sm"
-                    className="text-sm"
+                    className="text-sm whitespace-normal h-auto text-left break-words"
                     onClick={() => {
                       data.onAdd(id, `${text.trim().replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '')}?`);
                     }}
