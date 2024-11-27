@@ -35,6 +35,11 @@ const NODE_WIDTH = 500
 const GRID_SPACING_X = 512
 const VERTICAL_SPACING = 50
 
+type HighlightInfo = {
+  nodeIds: Set<string>;
+  edgeIds: Set<string>;
+}
+
 const buildTree = (nodes: Node[], edges: Edge[]): TreeNode => {
   const nodeMap: { [key: string]: TreeNode } = {}
   nodes.forEach(node => {
@@ -141,6 +146,15 @@ function ChatNode({ data, id }: NodeProps) {
     })
   }
 
+  const handleFocus = () => {
+    const highlights = data.findParentChain(id)
+    data.setHighlightInfo(highlights)
+  }
+
+  const handleBlur = () => {
+    data.setHighlightInfo({ nodeIds: new Set(), edgeIds: new Set() })
+  }
+
   useEffect(() => {
     if (nodeRef.current) {
       const height = nodeRef.current.offsetHeight
@@ -208,6 +222,8 @@ function ChatNode({ data, id }: NodeProps) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
             placeholder="Type your message..."
             className="pr-10 resize-none text-sm min-h-[2.5rem] overflow-hidden"
             rows={1}
@@ -260,6 +276,10 @@ const nodeTypes = {
 export function EnhancedFlexibleChatFlowchartComponent() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes)
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges)
+  const [highlightInfo, setHighlightInfo] = useState<HighlightInfo>({
+    nodeIds: new Set(),
+    edgeIds: new Set()
+  })
   const updateRequiredRef = useRef(false)
   const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -422,11 +442,42 @@ export function EnhancedFlexibleChatFlowchartComponent() {
       })
   }, [nodes])
 
+  const findParentChain = useCallback((nodeId: string): HighlightInfo => {
+    const parentNodes = new Set<string>()
+    const parentEdges = new Set<string>()
+
+    const traverse = (currentId: string) => {
+      parentNodes.add(currentId)
+      const parentEdge = edges.find(e => e.target === currentId)
+      if (parentEdge) {
+        parentEdges.add(parentEdge.id)
+        traverse(parentEdge.source)
+      }
+    }
+
+    traverse(nodeId)
+    return { nodeIds: parentNodes, edgeIds: parentEdges }
+  }, [edges])
+
   return (
     <div className="w-full h-[66vh] rounded-lg my-10 shadow-lg">
       <ReactFlow
-        nodes={nodes.map((node) => ({ ...node, data: { ...node.data, onAdd, onDelete, updateNodeData } }))}
-        edges={edges}
+        nodes={nodes.map((node) => ({
+          ...node,
+          data: {
+            ...node.data,
+            onAdd,
+            onDelete,
+            updateNodeData,
+            setHighlightInfo,
+            findParentChain
+          },
+          className: highlightInfo.nodeIds.has(node.id) ? 'highlight-node' : undefined
+        }))}
+        edges={edges.map(edge => ({
+          ...edge,
+          className: highlightInfo.edgeIds.has(edge.id) ? 'highlight-edge' : undefined
+        }))}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
@@ -457,6 +508,17 @@ export function EnhancedFlexibleChatFlowchartComponent() {
             Export as PNG
           </Button>
         </Panel>
+        <style>
+          {`
+            .highlight-node {
+              border: 2px solid #ff0000 !important;
+            }
+            .highlight-edge {
+              stroke: #ff0000 !important;
+              stroke-width: 2px !important;
+            }
+          `}
+        </style>
       </ReactFlow>
     </div>
   )
