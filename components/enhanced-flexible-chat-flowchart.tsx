@@ -89,7 +89,7 @@ const positionNodes = (tree: TreeNode, x: number, y: number, nodes: Node[], edge
 }
 
 const initialNodes: Node[] = [
-  { id: '0', data: { input: 'Welcome to WanderGPT!', response: 'Your thought is wandering, so does the chat. You can branch out the chat whenever you like!', height: 0 }, position: { x: 0, y: 0 }, type: 'chatNode' },
+  { id: '0', data: { input: 'Welcome to ForkGPT!', response: 'Your are wandering in the graph of knowledge, so does the chat! You can fork the conversation whenever you like.', height: 0 }, position: { x: 0, y: 0 }, type: 'chatNode' },
 ]
 
 const initialEdges: Edge[] = []
@@ -183,9 +183,19 @@ function ChatNode({ data, id }: NodeProps) {
   }, [data.input]);
 
   useEffect(() => {
-    if (response) {
+    if (id == '0') {
+      setBoldTexts([
+        "Options for personal investment",
+        "Book recommendations for philosophy",
+        "AI tools for personal productivity",
+      ])
+    }
+    if (id != '0' && response) {
       const extracted = extractBoldText(response);
-      setBoldTexts(extracted);
+      // Remove any trailing ":" from the extracted texts
+      // Also need to deduplicate
+      const uniqueExtracted = [...new Set(extracted.map(text => text.replace(/:$/, '')))];
+      setBoldTexts(uniqueExtracted);
     }
   }, [response]);
 
@@ -230,7 +240,7 @@ function ChatNode({ data, id }: NodeProps) {
                 </Button>
               )}
             </div>
-            {boldTexts.length > 0 && (
+            {boldTexts && boldTexts.length > 0 && (
               <div className="flex flex-wrap gap-2 mt-4">
                 {boldTexts.map((text, index) => (
                   <Button
@@ -239,10 +249,10 @@ function ChatNode({ data, id }: NodeProps) {
                     size="sm"
                     className="text-sm whitespace-normal h-auto text-left break-words"
                     onClick={() => {
-                      data.onAdd(id, `${text.trim().replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '')}?`);
+                      data.onAdd(id, `${text.trim()}?`);
                     }}
                   >
-                    {text.trim().replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '')}?
+                    {text.trim()}?
                   </Button>
                 ))}
               </div>
