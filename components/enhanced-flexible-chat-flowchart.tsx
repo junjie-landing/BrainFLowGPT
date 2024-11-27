@@ -424,6 +424,8 @@ export function EnhancedFlexibleChatFlowchartComponent() {
 
   const onDownloadImage = useCallback(() => {
     const nodesBounds = getRectOfNodes(nodes)
+    const SCALE_FACTOR = 2 // Increase this for higher resolution
+
     const transform = getTransformForBounds(
       nodesBounds,
       nodesBounds.width,
@@ -432,7 +434,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
       0.5
     )
 
-    // Find the viewport element (contains only nodes and edges)
+    // Find the viewport element
     const viewport = document.querySelector('.react-flow__viewport') as HTMLElement
     if (!viewport) return
 
@@ -449,9 +451,13 @@ export function EnhancedFlexibleChatFlowchartComponent() {
       backgroundColor: '#ffffff',
       width: nodesBounds.width ,
       height: nodesBounds.height ,
+      pixelRatio: 2, // Increase pixel ratio for sharper text
       style: {
         transform: `translate(${transform[0]}px, ${transform[1]}px) scale(${transform[2]})`,
       },
+      quality: 1, // Maximum quality
+      canvasWidth: nodesBounds.width * SCALE_FACTOR,
+      canvasHeight: nodesBounds.height * SCALE_FACTOR,
     })
       .then((dataUrl) => {
         const a = document.createElement('a')
