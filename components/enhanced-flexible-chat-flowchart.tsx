@@ -117,6 +117,7 @@ function ChatNode({ data, id }: NodeProps) {
       setResponse(aiResponse)
       data.updateNodeData(id, { input, response: aiResponse })
       setIsSubmitted(true)
+      data.setHighlightInfo({ nodeIds: new Set(), edgeIds: new Set() })
     } catch (error) {
       toast({
         title: "Error",
