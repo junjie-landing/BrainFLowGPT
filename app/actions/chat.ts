@@ -12,7 +12,7 @@ export async function getAIResponse(input: string, context: ChatMessage[] = []) 
     const messages: ChatMessage[] = [
       {
         role: 'system',
-        content: 'You are a helpful assistant. Maintain context from previous messages and provide relevant responses. Reponse should be as structured as possible in markdown format, with bullet points or numbered lists. Please bold each of the bullet points or numbered lists.'
+        content: 'You are a helpful assistant. Maintain context from previous messages and provide relevant responses. Reponse should be breakdown of the topic as structured as possible, in markdown format, with bullet points or numbered lists. Please bold each of the bullet points or numbered lists.'
       },
       ...context,
       { role: 'user', content: input }
