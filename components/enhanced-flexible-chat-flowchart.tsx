@@ -173,13 +173,14 @@ function ChatNode({ data, id }: NodeProps) {
   }, [id, data, input, response])
 
   useEffect(() => {
-    if (input === '') {
+    if (data.input) {
       const textarea = nodeRef.current?.querySelector('textarea');
       if (textarea) {
         textarea.style.height = 'auto';
+        textarea.style.height = `${textarea.scrollHeight}px`;
       }
     }
-  }, [input]);
+  }, [data.input]);
 
   useEffect(() => {
     if (response) {
@@ -249,22 +250,21 @@ function ChatNode({ data, id }: NodeProps) {
           </>
         )}
       </div>
-      {id !== '0' && !isSubmitted && ( // Updated to conditionally render input box
+      {id !== '0' && !isSubmitted && (
         <div className="relative">
           <Textarea
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              setInput(e.target.value);
+              e.target.style.height = 'auto';
+              e.target.style.height = `${e.target.scrollHeight}px`;
+            }}
             onKeyDown={handleKeyDown}
             onFocus={handleFocus}
             onBlur={handleBlur}
             placeholder="Type your message..."
             className="pr-10 resize-none text-sm min-h-[2.5rem] overflow-hidden"
             rows={1}
-            onInput={(e) => {
-              const target = e.target as HTMLTextAreaElement;
-              target.style.height = 'auto';
-              target.style.height = `${target.scrollHeight}px`;
-            }}
           />
           <Button
             size="sm" // Updated size
