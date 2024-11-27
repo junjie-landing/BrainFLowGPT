@@ -238,15 +238,10 @@ function ChatNode({ data, id }: NodeProps) {
                     size="sm"
                     className="text-sm"
                     onClick={() => {
-                      data.onAdd(id);
-                      // Find the last added node and update its input
-                      const lastNodeId = nodeId.toString();
-                      data.updateNodeData(lastNodeId, {
-                        input: `What is ${text}?`
-                      });
+                      data.onAdd(id, `${text.trim().replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '')}?`);
                     }}
                   >
-                    What is {text}?
+                    {text.trim().replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '')}?
                   </Button>
                 ))}
               </div>
@@ -326,7 +321,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
     [setEdges]
   )
 
-  const onAdd = useCallback((parentId: string) => {
+  const onAdd = useCallback((parentId: string, initialInput: string = '') => {
     const newNodeId = ulid()
 
     setNodes((nds) => {
@@ -344,7 +339,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
       const newNode = {
         id: newNodeId,
         data: {
-          input: '',
+          input: initialInput,
           response: '',
           height: 0,
           context
