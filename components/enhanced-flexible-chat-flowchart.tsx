@@ -571,6 +571,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={false}
+        panOnDrag={false}
       >
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         <Controls />
@@ -594,56 +595,78 @@ export function EnhancedFlexibleChatFlowchartComponent() {
               stroke: #ff0000 !important;
               stroke-width: 2px !important;
             }
+
+            .react-flow__handle {
+              cursor: pointer !important;
+            }
+
+            .react-flow__pane {
+              cursor: default !important;
+              pointer-events: none !important;
+            }
+
+            .react-flow {
+              pointer-events: auto !important;
+            }
+            .react-flow__renderer {
+              pointer-events: none !important;
+            }
+            .react-flow__viewport {
+              pointer-events: none !important;
+            }
+            .react-flow__selection {
+              display: none !important;
+            }
+            .react-flow__edge {
+              pointer-events: none !important;
+            }
+
+            .react-flow__pane {
+              cursor: default !important;
+              pointer-events: none !important;
+            }
+
+            .react-flow__background {
+              pointer-events: auto !important;
+              cursor: grab !important;
+            }
+
+            .react-flow__background:active {
+              cursor: grabbing !important;
+            }
+
             .react-flow__node {
               user-select: text !important;
               cursor: default !important;
               pointer-events: auto !important;
             }
+
+            .react-flow__renderer {
+              pointer-events: none !important;
+            }
+
+            .react-flow__viewport {
+              pointer-events: none !important;
+            }
+
             .react-flow__node * {
+              pointer-events: auto !important;
               user-select: text !important;
               cursor: text !important;
-              pointer-events: auto !important;
             }
-            .react-flow__handle {
-              cursor: pointer !important;
-            }
+
             .react-flow__node button {
               cursor: pointer !important;
             }
-            .react-flow__pane {
-              cursor: grab !important;
+
+            .react-flow__handle {
+              cursor: pointer !important;
             }
-            .react-flow__node p,
-            .react-flow__node div[class*="prose"] {
-              pointer-events: auto !important;
-              user-select: text !important;
-              cursor: text !important;
-            }
-            .react-flow__node .prose * {
-              pointer-events: auto !important;
-              user-select: text !important;
-              cursor: text !important;
-            }
-            .react-flow__node textarea {
-              pointer-events: auto !important;
-              user-select: text !important;
-              cursor: text !important;
-            }
-            .react-flow {
+
+            .react-flow__controls {
               pointer-events: auto !important;
             }
-            .react-flow__renderer {
-              pointer-events: auto !important;
-            }
-            .react-flow__viewport {
-              pointer-events: auto !important;
-            }
-            .react-flow__selection {
-              display: none !important;
-            }
-            .react-flow__nodesselection-rect {
-              display: none !important;
-            }
+
             .react-flow__edge {
               pointer-events: none !important;
             }
