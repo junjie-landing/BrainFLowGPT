@@ -89,7 +89,7 @@ const positionNodes = (tree: TreeNode, x: number, y: number, nodes: Node[], edge
 }
 
 const initialNodes: Node[] = [
-  { id: '0', data: { input: 'Welcome to ForkGPT!', response: 'Your are wandering in the graph of knowledge, so does the chat! You can fork the conversation whenever you like.', height: 0 }, position: { x: 0, y: 0 }, type: 'chatNode' },
+  { id: '0', data: { input: 'Welcome to BrainFlowGPT!', response: 'Your are wandering in the graph of knowledge, so does the chat! You can fork the conversation whenever you like.', height: 0 }, position: { x: 0, y: 0 }, type: 'chatNode' },
 ]
 
 const initialEdges: Edge[] = []
@@ -212,6 +212,7 @@ function ChatNode({ data, id }: NodeProps) {
         setShowAddButton(false)
         setShowDeleteButton(false)
       }}
+
     >
       {(isSubmitted || id == '0') && (
         <div className="mb-2" onMouseDown={(e) => e.stopPropagation()}>
@@ -225,9 +226,18 @@ function ChatNode({ data, id }: NodeProps) {
               className="p-2 bg-gray-100 rounded relative"
               onMouseEnter={() => setShowCopyButton(true)}
               onMouseLeave={() => setShowCopyButton(false)}
+              onMouseDown={(e) => e.stopPropagation()}
             >
-              <div className="prose prose-sm max-w-none [&_p]:mb-4 [&_ul]:mb-4 [&_ol]:mb-4 [&_blockquote]:mb-4 [&_pre]:mb-4">
-                <ReactMarkdown>{response}</ReactMarkdown>
+              <div
+                className="prose prose-sm max-w-none [&_p]:mb-4 [&_ul]:mb-4 [&_ol]:mb-4 [&_blockquote]:mb-4 [&_pre]:mb-4"
+                onMouseDown={(e) => e.stopPropagation()}
+              >
+                <ReactMarkdown remarkPlugins={[]} components={{
+                  pre: ({ node, ...props }) => <pre {...props} />,
+                  code: ({ node, ...props }) => <code {...props} />
+                }}>
+                  {response}
+                </ReactMarkdown>
               </div>
               {showCopyButton && (
                 <Button
@@ -516,6 +526,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
       <ReactFlow
         nodes={nodes.map((node) => ({
           ...node,
+          draggable: false,
           data: {
             ...node.data,
             onAdd,
@@ -544,8 +555,6 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         zoomOnScroll={false}
         panOnScroll={true}
         panOnScrollMode={PanOnScrollMode.Vertical}
-        // nodesDraggable={true}
-        onNodeDragStop={onNodeDragStop}
       >
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         <Controls />
