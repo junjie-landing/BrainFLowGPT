@@ -571,7 +571,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={false}
-        panOnDrag={false}
+        panOnDrag={true}
       >
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         <Controls />
@@ -601,18 +601,21 @@ export function EnhancedFlexibleChatFlowchartComponent() {
             }
 
             .react-flow__pane {
-              cursor: default !important;
-              pointer-events: none !important;
+              cursor: grab !important;
+            }
+
+            .react-flow__pane:active {
+              cursor: grabbing !important;
             }
 
             .react-flow {
-              pointer-events: auto !important;
+              pointer-events: all !important;
             }
             .react-flow__renderer {
               pointer-events: none !important;
             }
             .react-flow__viewport {
-              pointer-events: none !important;
+              pointer-events: all !important;
             }
             .react-flow__selection {
               display: none !important;
@@ -621,24 +624,10 @@ export function EnhancedFlexibleChatFlowchartComponent() {
               pointer-events: none !important;
             }
 
-            .react-flow__pane {
-              cursor: default !important;
-              pointer-events: none !important;
-            }
-
-            .react-flow__background {
-              pointer-events: auto !important;
-              cursor: grab !important;
-            }
-
-            .react-flow__background:active {
-              cursor: grabbing !important;
-            }
-
             .react-flow__node {
+              pointer-events: all !important;
               user-select: text !important;
               cursor: default !important;
-              pointer-events: auto !important;
             }
 
             .react-flow__renderer {
@@ -646,25 +635,16 @@ export function EnhancedFlexibleChatFlowchartComponent() {
             }
 
             .react-flow__viewport {
-              pointer-events: none !important;
+              pointer-events: all !important;
             }
 
             .react-flow__node * {
-              pointer-events: auto !important;
+              pointer-events: all !important;
               user-select: text !important;
-              cursor: text !important;
             }
 
             .react-flow__node button {
               cursor: pointer !important;
-            }
-
-            .react-flow__handle {
-              cursor: pointer !important;
-            }
-
-            .react-flow__controls {
-              pointer-events: auto !important;
             }
 
             .react-flow__edge {
