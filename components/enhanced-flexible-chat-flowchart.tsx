@@ -21,7 +21,7 @@ import ReactFlow, {
   PanOnScrollMode,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
-import { PlusCircle, Trash2, Copy, Send, Download } from 'lucide-react'
+import { PlusCircle, Trash2, Copy, Send, Download, Loader2 } from 'lucide-react'
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -277,12 +277,16 @@ function ChatNode({ data, id }: NodeProps) {
             rows={1}
           />
           <Button
-            size="sm" // Updated size
-            className="absolute right-2 bottom-2 p-1" // Updated styling
+            size="sm"
+            className="absolute right-2 bottom-2 p-1"
             onClick={handleSubmit}
-            disabled={!input.trim()}
+            disabled={!input.trim() || isLoading}
           >
-            <Send className="h-3 w-3" />
+            {isLoading ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : (
+              <Send className="h-3 w-3" />
+            )}
           </Button>
         </div>
       )}
