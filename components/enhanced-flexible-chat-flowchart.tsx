@@ -224,7 +224,16 @@ function ChatNode({ data, id }: NodeProps) {
           onMouseDown={(e) => e.stopPropagation()}
           style={{ userSelect: 'text', pointerEvents: 'auto' }}
         >
-          <p className="font-bold text-lg" style={{ userSelect: 'text', pointerEvents: 'auto' }}>{input}</p>
+          <p
+            className="font-bold text-lg"
+            style={{
+              userSelect: 'text',
+              pointerEvents: 'auto',
+              cursor: 'text'
+            }}
+          >
+            {input}
+          </p>
         </div>
       )}
       <div
@@ -296,6 +305,7 @@ function ChatNode({ data, id }: NodeProps) {
             placeholder="Type your message..."
             className="pr-10 resize-none text-sm min-h-[2.5rem] overflow-hidden"
             rows={1}
+            style={{ userSelect: 'text', pointerEvents: 'auto' }}
           />
           <Button
             size="sm"
