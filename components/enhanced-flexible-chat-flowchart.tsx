@@ -203,7 +203,12 @@ function ChatNode({ data, id }: NodeProps) {
     <Card
       ref={nodeRef}
       className="relative p-4 pt-8 shadow-md"
-      style={{ width: NODE_WIDTH }}
+      style={{
+        width: NODE_WIDTH,
+        userSelect: 'text',
+        cursor: 'default',
+        pointerEvents: 'auto'
+      }}
       onMouseEnter={() => {
         setShowAddButton(true)
         setShowDeleteButton(true)
@@ -212,14 +217,21 @@ function ChatNode({ data, id }: NodeProps) {
         setShowAddButton(false)
         setShowDeleteButton(false)
       }}
-
     >
       {(isSubmitted || id == '0') && (
-        <div className="mb-2" onMouseDown={(e) => e.stopPropagation()}>
-          <p className="font-bold text-lg">{input}</p>
+        <div
+          className="mb-2"
+          onMouseDown={(e) => e.stopPropagation()}
+          style={{ userSelect: 'text', pointerEvents: 'auto' }}
+        >
+          <p className="font-bold text-lg" style={{ userSelect: 'text', pointerEvents: 'auto' }}>{input}</p>
         </div>
       )}
-      <div className="space-y-2 mb-2" onMouseDown={(e) => e.stopPropagation()}>
+      <div
+        className="space-y-2 mb-2"
+        onMouseDown={(e) => e.stopPropagation()}
+        style={{ userSelect: 'text', pointerEvents: 'auto' }}
+      >
         {response && (
           <>
             <div
@@ -227,15 +239,14 @@ function ChatNode({ data, id }: NodeProps) {
               onMouseEnter={() => setShowCopyButton(true)}
               onMouseLeave={() => setShowCopyButton(false)}
               onMouseDown={(e) => e.stopPropagation()}
+              style={{ userSelect: 'text', pointerEvents: 'auto' }}
             >
               <div
                 className="prose prose-sm max-w-none [&_p]:mb-4 [&_ul]:mb-4 [&_ol]:mb-4 [&_blockquote]:mb-4 [&_pre]:mb-4"
                 onMouseDown={(e) => e.stopPropagation()}
+                style={{ userSelect: 'text', pointerEvents: 'auto' }}
               >
-                <ReactMarkdown remarkPlugins={[]} components={{
-                  pre: ({ node, ...props }) => <pre {...props} />,
-                  code: ({ node, ...props }) => <code {...props} />
-                }}>
+                <ReactMarkdown>
                   {response}
                 </ReactMarkdown>
               </div>
@@ -527,6 +538,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         nodes={nodes.map((node) => ({
           ...node,
           draggable: false,
+          selectable: false,
           data: {
             ...node.data,
             onAdd,
@@ -547,14 +559,18 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         nodeTypes={nodeTypes}
         connectionMode={ConnectionMode.Loose}
         fitView
-        fitViewOptions={
-          {maxZoom: 1,}
-        }
+        fitViewOptions={{ maxZoom: 1 }}
         minZoom={0.1}
         maxZoom={4}
         zoomOnScroll={false}
         panOnScroll={true}
         panOnScrollMode={PanOnScrollMode.Vertical}
+        selectNodesOnDrag={false}
+        preventScrolling={false}
+        zoomOnDoubleClick={false}
+        nodesDraggable={false}
+        nodesConnectable={false}
+        elementsSelectable={false}
       >
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         <Controls />
@@ -577,6 +593,59 @@ export function EnhancedFlexibleChatFlowchartComponent() {
             .highlight-edge {
               stroke: #ff0000 !important;
               stroke-width: 2px !important;
+            }
+            .react-flow__node {
+              user-select: text !important;
+              cursor: default !important;
+              pointer-events: auto !important;
+            }
+            .react-flow__node * {
+              user-select: text !important;
+              cursor: text !important;
+              pointer-events: auto !important;
+            }
+            .react-flow__handle {
+              cursor: pointer !important;
+            }
+            .react-flow__node button {
+              cursor: pointer !important;
+            }
+            .react-flow__pane {
+              cursor: grab !important;
+            }
+            .react-flow__node p,
+            .react-flow__node div[class*="prose"] {
+              pointer-events: auto !important;
+              user-select: text !important;
+              cursor: text !important;
+            }
+            .react-flow__node .prose * {
+              pointer-events: auto !important;
+              user-select: text !important;
+              cursor: text !important;
+            }
+            .react-flow__node textarea {
+              pointer-events: auto !important;
+              user-select: text !important;
+              cursor: text !important;
+            }
+            .react-flow {
+              pointer-events: auto !important;
+            }
+            .react-flow__renderer {
+              pointer-events: auto !important;
+            }
+            .react-flow__viewport {
+              pointer-events: auto !important;
+            }
+            .react-flow__selection {
+              display: none !important;
+            }
+            .react-flow__nodesselection-rect {
+              display: none !important;
+            }
+            .react-flow__edge {
+              pointer-events: none !important;
             }
           `}
         </style>
