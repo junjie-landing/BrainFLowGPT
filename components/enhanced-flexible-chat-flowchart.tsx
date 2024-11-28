@@ -278,7 +278,7 @@ function ChatNode({ data, id }: NodeProps) {
           />
           <Button
             size="sm"
-            className="absolute right-2 bottom-2 p-1"
+            className="absolute right-2 top-[50%] -translate-y-[50%] p-1 h-6 w-6 flex items-center justify-center"
             onClick={handleSubmit}
             disabled={!input.trim() || isLoading}
           >
