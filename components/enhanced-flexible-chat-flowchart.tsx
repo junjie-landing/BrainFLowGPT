@@ -571,7 +571,8 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={false}
-        panOnDrag={true}
+        panOnDrag={[1,2]}
+        panActivationKeyCode={"Alt"}
       >
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         <Controls />
@@ -601,54 +602,29 @@ export function EnhancedFlexibleChatFlowchartComponent() {
             }
 
             .react-flow__pane {
-              cursor: grab !important;
-            }
-
-            .react-flow__pane:active {
-              cursor: grabbing !important;
-            }
-
-            .react-flow {
-              pointer-events: all !important;
-            }
-            .react-flow__renderer {
-              pointer-events: none !important;
-            }
-            .react-flow__viewport {
-              pointer-events: all !important;
-            }
-            .react-flow__selection {
-              display: none !important;
-            }
-            .react-flow__edge {
               pointer-events: none !important;
             }
 
             .react-flow__node {
               pointer-events: all !important;
               user-select: text !important;
+              cursor: grab !important;
+            }
+
+            .react-flow__node:active {
+              cursor: grabbing !important;
+            }
+
+            .react-flow__node .card-content {
               cursor: default !important;
-            }
-
-            .react-flow__renderer {
-              pointer-events: none !important;
-            }
-
-            .react-flow__viewport {
-              pointer-events: all !important;
-            }
-
-            .react-flow__node * {
-              pointer-events: all !important;
-              user-select: text !important;
             }
 
             .react-flow__node button {
               cursor: pointer !important;
             }
 
-            .react-flow__edge {
-              pointer-events: none !important;
+            .react-flow__node .prose {
+              cursor: text !important;
             }
           `}
         </style>
