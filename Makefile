@@ -1,18 +1,18 @@
 .PHONY: dev setup db-push db-studio supabase-migration supabase-push supabase-generate
 
 install:
-	npm install
-	npm install @supabase/supabase-js
+	pnpm install
+	pnpm install @supabase/supabase-js
 
 dev:
-	npm run dev
+	pnpm run dev
 
 setup:
-	npm install
+	pnpm install
 	supabase init --force
 	supabase start || (supabase stop && supabase start)
-	npm run prisma:generate
-	npm run prisma:push
+	pnpm run prisma:generate
+	pnpm run prisma:push
 
 clean:
 	supabase stop
