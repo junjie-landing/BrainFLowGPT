@@ -494,8 +494,8 @@ export function EnhancedFlexibleChatFlowchartComponent() {
 
     toPng(viewport, {
       backgroundColor: '#ffffff',
-      width: nodesBounds.width ,
-      height: nodesBounds.height ,
+      width: nodesBounds.width,
+      height: nodesBounds.height,
       pixelRatio: 2, // Increase pixel ratio for sharper text
       style: {
         transform: `translate(${transform[0]}px, ${transform[1]}px) scale(${transform[2]})`,
@@ -574,14 +574,14 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         maxZoom={4}
         zoomOnScroll={false}
         panOnScroll={true}
-        panOnScrollMode={PanOnScrollMode.Vertical}
+        panOnScrollMode={PanOnScrollMode.Free}
         selectNodesOnDrag={false}
         preventScrolling={false}
         zoomOnDoubleClick={false}
         nodesDraggable={false}
         nodesConnectable={false}
         elementsSelectable={false}
-        panOnDrag={[1,2]}
+        panOnDrag={[1, 2]}
         panActivationKeyCode={"Alt"}
       >
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
