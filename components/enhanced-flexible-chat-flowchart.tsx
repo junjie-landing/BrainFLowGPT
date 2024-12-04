@@ -21,7 +21,7 @@ import ReactFlow, {
   PanOnScrollMode,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
-import { PlusCircle, Trash2, Copy, Send, Download, Loader2 } from 'lucide-react'
+import { PlusCircle, Trash2, Copy, Send, Download, Loader2, Share2, Save, Share, Cloud, CloudUpload, Database } from 'lucide-react'
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -609,8 +609,8 @@ export function EnhancedFlexibleChatFlowchartComponent() {
             onClick={onDownloadImage}
             className="flex items-center gap-2"
           >
-            <Download className="h-4 w-4" />
-            Export as PNG
+            <Share className="h-4 w-4" />
+            Share as PNG
           </Button>
           <Button
             variant="outline"
@@ -618,8 +618,8 @@ export function EnhancedFlexibleChatFlowchartComponent() {
             onClick={() => downloadFlowAsJson(nodes, edges)}
             className="flex items-center gap-2"
           >
-            <Download className="h-4 w-4" />
-            Save Flow
+            <CloudUpload className="h-4 w-4" />
+            Save FLow
           </Button>
         </Panel>
         <style>
