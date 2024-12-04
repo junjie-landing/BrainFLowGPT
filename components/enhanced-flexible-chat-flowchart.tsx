@@ -19,9 +19,10 @@ import ReactFlow, {
   getRectOfNodes,
   getTransformForBounds,
   PanOnScrollMode,
+  ReactFlowInstance,
 } from 'reactflow'
 import 'reactflow/dist/style.css'
-import { PlusCircle, Trash2, Copy, Send, Download, Loader2, Share2, Save, Share, Cloud, CloudUpload, Database } from 'lucide-react'
+import { PlusCircle, Trash2, Copy, Send, Download, Loader2, Share2, Save, Share, Cloud, CloudUpload, Database, Maximize2 } from 'lucide-react'
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -376,6 +377,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
   const updateRequiredRef = useRef(false)
   const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   const { messages, isLoading, error, sendMessage, downloadChatAsJson, downloadFlowAsJson, importFlowFromJson } = useChat()
+  const reactFlowInstance = useRef<ReactFlowInstance | null>(null);
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge({ ...params, animated: true }, eds)),
@@ -558,6 +560,17 @@ export function EnhancedFlexibleChatFlowchartComponent() {
     return { nodeIds: parentNodes, edgeIds: parentEdges }
   }, [edges])
 
+  const fitView = useCallback(() => {
+    if (reactFlowInstance.current) {
+      reactFlowInstance.current.fitView({
+        padding: 0.2,
+        maxZoom: 1,
+        duration: 400,
+        includeHiddenNodes: false
+      });
+    }
+  }, []);
+
   const handleImportFlow = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
@@ -620,11 +633,16 @@ export function EnhancedFlexibleChatFlowchartComponent() {
       setNodes(newNodes)
       setEdges(newEdges)
 
-      // Update positions after a short delay
+      // Update positions and fit view
       setTimeout(() => {
         updateRequiredRef.current = true
         updateNodePositions()
-      }, 200) // Increased delay to ensure DOM is ready
+
+        // Use the new fitView function
+        setTimeout(() => {
+          fitView();
+        }, 300);
+      }, 200)
 
       toast({
         title: "Success",
@@ -641,11 +659,12 @@ export function EnhancedFlexibleChatFlowchartComponent() {
 
     // Reset input
     event.target.value = ''
-  }, [importFlowFromJson, setNodes, setEdges, onAdd, onDelete, updateNodeData, setHighlightInfo, findParentChain, updateNodePositions])
+  }, [importFlowFromJson, setNodes, setEdges, onAdd, onDelete, updateNodeData, setHighlightInfo, findParentChain, updateNodePositions, fitView])
 
   return (
     <div className="w-full h-[66vh] rounded-lg my-10 shadow-lg">
       <ReactFlow
+        ref={reactFlowInstance}
         nodes={nodes.map((node) => ({
           ...node,
           draggable: false,
@@ -664,6 +683,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
           ...edge,
           className: highlightInfo.edgeIds.has(edge.id) ? 'highlight-edge' : undefined
         }))}
+        onInit={instance => reactFlowInstance.current = instance}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
@@ -688,6 +708,15 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         <Controls />
         <Panel position="top-right" className="flex gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fitView}
+            className="flex items-center gap-2"
+          >
+            <Maximize2 className="h-4 w-4" />
+            Center View
+          </Button>
           <Button
             variant="outline"
             size="sm"
