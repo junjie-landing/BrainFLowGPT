@@ -560,17 +560,6 @@ export function EnhancedFlexibleChatFlowchartComponent() {
     return { nodeIds: parentNodes, edgeIds: parentEdges }
   }, [edges])
 
-  const fitView = useCallback(() => {
-    if (reactFlowInstance.current) {
-      reactFlowInstance.current.fitView({
-        padding: 0.2,
-        maxZoom: 1,
-        duration: 400,
-        includeHiddenNodes: false
-      });
-    }
-  }, []);
-
   const handleImportFlow = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
     if (!file) return
@@ -638,10 +627,17 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         updateRequiredRef.current = true
         updateNodePositions()
 
-        // Use the new fitView function
+        // Add a longer delay before fitting view to ensure nodes are positioned
         setTimeout(() => {
-          fitView();
-        }, 300);
+          if (reactFlowInstance.current) {
+            reactFlowInstance.current.fitView({
+              padding: 0.2,
+              maxZoom: 1,
+              duration: 800,
+              includeHiddenNodes: false
+            });
+          }
+        }, 500); // Increased delay to ensure nodes are properly positioned
       }, 200)
 
       toast({
@@ -659,7 +655,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
 
     // Reset input
     event.target.value = ''
-  }, [importFlowFromJson, setNodes, setEdges, onAdd, onDelete, updateNodeData, setHighlightInfo, findParentChain, updateNodePositions, fitView])
+  }, [importFlowFromJson, setNodes, setEdges, onAdd, onDelete, updateNodeData, setHighlightInfo, findParentChain, updateNodePositions])
 
   return (
     <div className="w-full h-[66vh] rounded-lg my-10 shadow-lg">
@@ -708,15 +704,20 @@ export function EnhancedFlexibleChatFlowchartComponent() {
         <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
         <Controls />
         <Panel position="top-right" className="flex gap-2">
-          <Button
+          {/* <Button
             variant="outline"
             size="sm"
-            onClick={fitView}
+            onClick={() => reactFlowInstance.current?.fitView({
+              padding: 0.2,
+              maxZoom: 1,
+              duration: 800,
+              includeHiddenNodes: false
+            })}
             className="flex items-center gap-2"
           >
             <Maximize2 className="h-4 w-4" />
             Center View
-          </Button>
+          </Button> */}
           <Button
             variant="outline"
             size="sm"
