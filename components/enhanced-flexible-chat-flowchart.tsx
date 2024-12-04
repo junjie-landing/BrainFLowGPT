@@ -32,6 +32,8 @@ import ReactMarkdown from 'react-markdown'
 import { NodeData, ChatMessage, TreeNode } from '@/types/chat'
 import { buildChatContext } from '@/lib/chat-context'
 import { ulid } from 'ulid'
+import { useChat } from '@/lib/hooks/useChat'
+
 const NODE_WIDTH = 500
 const GRID_SPACING_X = 512
 const VERTICAL_SPACING = 50
@@ -373,6 +375,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
   })
   const updateRequiredRef = useRef(false)
   const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const { messages, isLoading, error, sendMessage, downloadChatAsJson, downloadFlowAsJson } = useChat()
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge({ ...params, animated: true }, eds)),
@@ -608,6 +611,15 @@ export function EnhancedFlexibleChatFlowchartComponent() {
           >
             <Download className="h-4 w-4" />
             Export as PNG
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => downloadFlowAsJson(nodes, edges)}
+            className="flex items-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Save Flow
           </Button>
         </Panel>
         <style>

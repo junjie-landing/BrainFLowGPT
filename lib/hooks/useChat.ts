@@ -1,15 +1,93 @@
 import { useState, useCallback } from 'react'
 import { createMessage } from '@/lib/openai'
+import { Node, Edge } from 'reactflow'
 
 interface Message {
   role: 'user' | 'assistant' | 'system'
   content: string
 }
 
+interface FlowExport {
+  nodes: Node[]
+  edges: Edge[]
+  timestamp: string
+  metadata: {
+    version: string
+    exportType: string
+  }
+}
+
 export function useChat() {
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  const downloadChatAsJson = useCallback(() => {
+    try {
+      const chatData = {
+        messages: messages,
+        timestamp: new Date().toISOString(),
+        metadata: {
+          version: '1.0',
+          exportType: 'chat_conversation'
+        }
+      }
+
+      const jsonString = JSON.stringify(chatData, null, 2)
+      const blob = new Blob([jsonString], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `chat-export-${new Date().toISOString()}.json`
+
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Error downloading chat:', err)
+      setError('Failed to download chat history')
+    }
+  }, [messages])
+
+  const downloadFlowAsJson = useCallback((nodes: Node[], edges: Edge[]) => {
+    try {
+      // Clean up the nodes data to ensure proper serialization
+      const cleanNodes = nodes.map(node => ({
+        ...node,
+        data: {
+          input: node.data.input,
+          response: node.data.response,
+          height: node.data.height
+        }
+      }))
+
+      const flowData: FlowExport = {
+        nodes: cleanNodes,
+        edges: edges,
+        timestamp: new Date().toISOString(),
+        metadata: {
+          version: '1.0',
+          exportType: 'flow_conversation'
+        }
+      }
+
+      const jsonString = JSON.stringify(flowData, null, 2)
+      const blob = new Blob([jsonString], { type: 'application/json' })
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `flow-export-${new Date().toISOString()}.json`
+
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+    } catch (err) {
+      console.error('Error downloading flow:', err)
+      setError('Failed to download flow')
+    }
+  }, [])
 
   const sendMessage = useCallback(async (content: string) => {
     setIsLoading(true)
@@ -73,5 +151,7 @@ export function useChat() {
     isLoading,
     error,
     sendMessage,
+    downloadChatAsJson,
+    downloadFlowAsJson,
   }
 }
