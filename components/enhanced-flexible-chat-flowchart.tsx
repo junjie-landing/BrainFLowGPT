@@ -111,6 +111,7 @@ function ChatNode({ data, id }: NodeProps) {
   const nodeRef = useRef<HTMLDivElement>(null)
   const prevHeightRef = useRef<number>(data.height)
   const [boldTexts, setBoldTexts] = useState<string[]>([])
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
 
   const handleAdd = () => {
     data.onAdd(id)
@@ -198,6 +199,17 @@ function ChatNode({ data, id }: NodeProps) {
       setBoldTexts(uniqueExtracted);
     }
   }, [response]);
+
+  useEffect(() => {
+    // Small delay to ensure the DOM is ready
+    const timeoutId = setTimeout(() => {
+      if (!isSubmitted && id !== '0' && textareaRef.current) {
+        textareaRef.current.focus()
+      }
+    }, 100)
+
+    return () => clearTimeout(timeoutId)
+  }, []) // Empty dependency array to only run on mount
 
   return (
     <Card
@@ -293,6 +305,7 @@ function ChatNode({ data, id }: NodeProps) {
       {id !== '0' && !isSubmitted && (
         <div className="relative">
           <Textarea
+            ref={textareaRef}
             value={input}
             onChange={(e) => {
               setInput(e.target.value);
