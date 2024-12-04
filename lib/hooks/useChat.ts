@@ -89,6 +89,37 @@ export function useChat() {
     }
   }, [])
 
+  const importFlowFromJson = useCallback((file: File): Promise<FlowExport> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+
+      reader.onload = (event) => {
+        try {
+          const jsonData = JSON.parse(event.target?.result as string)
+
+          // Validate the imported data structure
+          if (!jsonData.nodes || !jsonData.edges || !jsonData.metadata) {
+            throw new Error('Invalid flow data structure')
+          }
+
+          if (jsonData.metadata.exportType !== 'flow_conversation') {
+            throw new Error('Invalid flow file type')
+          }
+
+          resolve(jsonData as FlowExport)
+        } catch (err) {
+          reject(new Error('Failed to parse flow file'))
+        }
+      }
+
+      reader.onerror = () => {
+        reject(new Error('Failed to read flow file'))
+      }
+
+      reader.readAsText(file)
+    })
+  }, [])
+
   const sendMessage = useCallback(async (content: string) => {
     setIsLoading(true)
     setError(null)
@@ -153,5 +184,6 @@ export function useChat() {
     sendMessage,
     downloadChatAsJson,
     downloadFlowAsJson,
+    importFlowFromJson,
   }
 }

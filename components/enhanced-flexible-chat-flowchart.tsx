@@ -375,7 +375,7 @@ export function EnhancedFlexibleChatFlowchartComponent() {
   })
   const updateRequiredRef = useRef(false)
   const updateTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const { messages, isLoading, error, sendMessage, downloadChatAsJson, downloadFlowAsJson } = useChat()
+  const { messages, isLoading, error, sendMessage, downloadChatAsJson, downloadFlowAsJson, importFlowFromJson } = useChat()
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge({ ...params, animated: true }, eds)),
@@ -558,6 +558,91 @@ export function EnhancedFlexibleChatFlowchartComponent() {
     return { nodeIds: parentNodes, edgeIds: parentEdges }
   }, [edges])
 
+  const handleImportFlow = useCallback(async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file) return
+
+    try {
+      const flowData = await importFlowFromJson(file)
+
+      // Create temporary arrays to build the complete flow before setting state
+      let newNodes: Node[] = []
+      let newEdges: Edge[] = []
+
+      // Create a map for quick node lookup
+      const nodeMap = new Map(flowData.nodes.map(node => [node.id, node]))
+
+      // Find root node (usually '0')
+      const rootNode = flowData.nodes.find(node => node.id === '0') || flowData.nodes[0]
+      if (!rootNode) throw new Error('No root node found')
+
+      // Function to recursively add nodes and their children
+      const addNodeAndChildren = (nodeId: string, processedNodes = new Set<string>()) => {
+        if (processedNodes.has(nodeId)) return
+        processedNodes.add(nodeId)
+
+        const node = nodeMap.get(nodeId)
+        if (!node) return
+
+        // Add the current node to temporary array
+        newNodes.push({
+          ...node,
+          type: 'chatNode',
+          data: {
+            input: node.data.input,
+            response: node.data.response,
+            height: node.data.height || 0,
+            onAdd,
+            onDelete,
+            updateNodeData,
+            setHighlightInfo,
+            findParentChain,
+            context: buildChatContext(flowData.nodes, flowData.edges, nodeId)
+          }
+        })
+
+        // Find and add child nodes
+        const childEdges = flowData.edges.filter(edge => edge.source === nodeId)
+        childEdges.forEach(edge => {
+          newEdges.push({
+            ...edge,
+            type: 'smoothstep',
+            animated: true
+          })
+          addNodeAndChildren(edge.target, processedNodes)
+        })
+      }
+
+      // Build complete arrays first
+      addNodeAndChildren(rootNode.id)
+
+      // Set state only once with complete data
+      setNodes(newNodes)
+      setEdges(newEdges)
+
+      // Update positions after a short delay
+      setTimeout(() => {
+        updateRequiredRef.current = true
+        updateNodePositions()
+      }, 200) // Increased delay to ensure DOM is ready
+
+      toast({
+        title: "Success",
+        description: "Flow imported successfully",
+      })
+    } catch (error) {
+      console.error('Import error:', error)
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to import flow",
+        variant: "destructive"
+      })
+    }
+
+    // Reset input
+    event.target.value = ''
+  }, [importFlowFromJson, setNodes, setEdges, onAdd, onDelete, updateNodeData, setHighlightInfo, findParentChain, updateNodePositions])
+
   return (
     <div className="w-full h-[66vh] rounded-lg my-10 shadow-lg">
       <ReactFlow
@@ -619,8 +704,25 @@ export function EnhancedFlexibleChatFlowchartComponent() {
             className="flex items-center gap-2"
           >
             <CloudUpload className="h-4 w-4" />
-            Save FLow
+            Save Flow
           </Button>
+          <div className="relative">
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImportFlow}
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              title="Import Flow"
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Database className="h-4 w-4" />
+              Import Flow
+            </Button>
+          </div>
         </Panel>
         <style>
           {`
